@@ -8,23 +8,25 @@ http://ioncommunity.lifetechnologies.com/community/products/torrent-variant-call
 
 # 1. Download source file
 
-wget updates.iontorrent.com/tvc_standalone/tvc-5.0.0.tar.gz
+wget updates.iontorrent.com/tvc_standalone/tvc-5.0.2.tar.gz
 
 
 # 2. Copy source file into build root directory
 
-TVC_VERSION=tvc-5.0.0
+TVC_VERSION=tvc-5.0.2
 
 BUILD_ROOT_DIR=`mktemp -d`
 cp $TVC_VERSION.tar.gz $BUILD_ROOT_DIR
-
+DISTRIBUTION_CODENAME=`lsb_release -is`_`lsb_release -rs`_`uname -m`
+TVC_INSTALL_DIR=$BUILD_ROOT_DIR/$TVC_VERSION-$DISTRIBUTION_CODENAME-binary
+mkdir -p $TVC_INSTALL_DIR/bin/
 
 # 3. Install dependencies
 
 # 3.1 RedHat/CentOS
 
 yum -y install gcc-c++ cmake zlib-devel bzip2-devel bzip2 \
-ncurses-devel python-simplejson atlas-devel blas-devel lapack-devel redhat-lsb-core \
+ncurses-devel python-simplejson atlas-devel blas-devel lapack-devel redhat-lsb-core boost-devel \
 # perl perl-Data-Dumper # with version 7
 
 
@@ -103,15 +105,13 @@ cp samtools $TVC_INSTALL_DIR/bin/
 cd $BUILD_ROOT_DIR
 tar xvzf $TVC_VERSION.tar.gz
 TVC_SOURCE_DIR=$BUILD_ROOT_DIR/$TVC_VERSION
-DISTRIBUTION_CODENAME=`lsb_release -is`_`lsb_release -rs`_`uname -m`
-TVC_INSTALL_DIR=$BUILD_ROOT_DIR/$TVC_VERSION-$DISTRIBUTION_CODENAME-binary
 mkdir $TVC_VERSION-build
 cd $TVC_VERSION-build
 cmake $TVC_SOURCE_DIR -DCMAKE_INSTALL_PREFIX:PATH=$TVC_INSTALL_DIR -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo
 make -j4 install
 
 # 11. create binary package
-tar cvzf $TVC_VERSION-$DISTRIBUTION_CODENAME-binary.tar.gz $TVC_VERSION-$DISTRIBUTION_CODENAME-binary
+tar cvzf $TVC_VERSION-$DISTRIBUTION_CODENAME-binary.tar.gz -C $BUILD_ROOT_DIR $TVC_VERSION-$DISTRIBUTION_CODENAME-binary
 
 
 ######################################################################################
