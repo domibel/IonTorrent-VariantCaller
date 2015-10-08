@@ -1,0 +1,46 @@
+/* Copyright (C) 2011 Ion Torrent Systems, Inc. All Rights Reserved */
+#include "IonVersion.h"
+
+using namespace std;
+
+string IonVersion::GetMajor()     {return "5";}
+string IonVersion::GetMinor()     {return "0";}
+string IonVersion::GetRelease()   {return "0";}
+string IonVersion::GetGitHash()   {return "a074b60-acc25d6";}
+string IonVersion::GetGitPath()   {return "";}
+string IonVersion::GetBuildNum()  {return "";}
+string IonVersion::GetBuildTag()  {return "";}
+string IonVersion::GetBuildHost() {return "";}
+
+string IonVersion::GetFullVersion(std::string module)
+{
+	string v = module;
+	v += " (";
+	v += "5";
+	v += ".";
+	v += "0";
+	v += ".";
+	v += "0";
+	v += ")\n";
+	v += "Build: ";
+	v += "";
+	v += " (";
+	v += "";
+	v += ")\nSource: ";
+	v += "";
+	v += " (";
+	v += "a074b60-acc25d6";
+	v += ")\n";
+	return v;
+}
+
+string IonVersion::GetVersion()
+{
+	string v = "5";
+	v += ".";
+	v += "0";
+   	return (v);
+}
+
+
+
