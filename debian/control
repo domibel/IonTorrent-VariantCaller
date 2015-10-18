@@ -1,0 +1,20 @@
+Source: tvc
+Section: science
+Priority: optional
+Maintainer: Dominique Belhachemi <domibel@debian.org>
+Build-Depends: debhelper (>= 9), cmake, libbamtools-dev, libjsoncpp-dev, libarmadillo-dev, libboost-math-dev
+Standards-Version: 3.9.6
+Homepage: http://ioncommunity.thermofisher.com
+#Vcs-Git: git://anonscm.debian.org/collab-maint/tvc.git
+#Vcs-Browser: http://anonscm.debian.org/?p=collab-maint/tvc.git;a=summary
+
+Package: tvc
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python
+Description: genetic variant caller for Ion Torrent sequencing platforms
+ Torrent Variant Caller (TVC) is a genetic variant caller for
+ Ion Torrent sequencing platforms, and is specially optimized to exploit the
+ underlying flow signal information in the statistical model
+ to evaluate variants. Torrent Variant Caller is designed to call
+ single-nucleotide polymorphisms (SNPs), multi-nucleotide polymorphisms (MNPs),
+ insertions, deletions, and block substitutions.

@@ -66,7 +66,7 @@ void BAMWalkerEngine::Initialize(const ReferenceReader& ref_reader, TargetsManag
     tmp_header.Comments.clear();
     tmp_header.Programs.Clear();
     bam_writer_.SetCompressionMode(BamWriter::Compressed);
-    bam_writer_.SetNumThreads(4);
+    //bam_writer_.SetNumThreads(4);
     if (not bam_writer_.Open(postprocessed_bam, tmp_header, bam_reader_.GetReferenceData())) {
       cerr << "ERROR: Could not open postprocessed BAM file for writing : " << bam_writer_.GetErrorString();
       exit(1);

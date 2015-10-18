@@ -1,0 +1,218 @@
+Description: link against system libraries
+Author: Dominique Belhachemi <domibel@debian.org>
+
+Index: tvc-5.0.0+dfsg/CMakeLists.txt
+===================================================================
+--- tvc-5.0.0+dfsg.orig/CMakeLists.txt
++++ tvc-5.0.0+dfsg/CMakeLists.txt
+@@ -2,8 +2,8 @@
+ cmake_minimum_required (VERSION 2.6)
+ project (ion-tvc)
+ 
++enable_testing()
+ 
+-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse3")
+ add_definitions(-DALIGNSTATS_IGNORE)
+ 
+ configure_file (
+@@ -14,16 +14,12 @@ configure_file (
+ 
+ set(ION_VCFLIB_DIR    external/vcflib)
+ set(ION_FREEBAYES_DIR external/freebayes)
+-set(ION_JSONCPP_DIR   external/jsoncpp-src-amalgated0.6.0-rc1)
+-set(ION_BAMTOOLS_DIR  ${PROJECT_BINARY_DIR}/../bamtools-2.4.0.20150702+git15eadb925f)
+-set(ION_BAMTOOLS_LIBS ${PROJECT_BINARY_DIR}/../bamtools-2.4.0.20150702+git15eadb925f-build/lib/libbamtools.a)
+-set(ION_ARMADILLO_DIR ${PROJECT_BINARY_DIR}/../armadillo-4.600.1)
+ 
+ include_directories(${ION_VCFLIB_DIR})
+ include_directories(${ION_FREEBAYES_DIR}/src)
+-include_directories(${ION_JSONCPP_DIR})
+-include_directories("${ION_ARMADILLO_DIR}/include")
+-include_directories("${ION_BAMTOOLS_DIR}/src")
++
++include_directories("/usr/include/jsoncpp")
++include_directories("/usr/include/bamtools")
+ 
+ include_directories("${PROJECT_SOURCE_DIR}/VariantCaller")
+ include_directories("${PROJECT_SOURCE_DIR}/VariantCaller/FlowDistEval")
+@@ -91,43 +87,29 @@ add_executable(tvc
+ 
+   BaseCaller/PIDloop.cpp
+   BaseCaller/DPTreephaser.cpp
+-  BaseCaller/TreephaserSSE.cpp
++#  BaseCaller/TreephaserSSE.cpp
+   Calibration/LinearCalibrationModel.cpp
+   Calibration/FlowAlignment.cpp
+   Util/OptArgs.cpp
+   realignment/Realigner.cpp
+   file-io/ion_util.c
+   file-io/ion_error.c
+-  ${ION_JSONCPP_DIR}/jsoncpp.cpp
+   ${PROJECT_BINARY_DIR}/IonVersion.cpp
+ )
+ 
+-target_link_libraries(tvc ${ION_BAMTOOLS_LIBS} z pthread blas lapack)
++target_link_libraries(tvc bamtools z pthread blas lapack armadillo jsoncpp)
+ 
+ 
+ add_executable(tvcassembly
+   VariantCaller/IndelAssembly/IndelAssembly.cpp
+   VariantCaller/TargetsManager.cpp
+   VariantCaller/SampleManager.cpp
+-
+-  # TODO: Actually build vcflib as a static library and link to variant caller.
+-  # TODO2: Resolve bgzf.c collisions between vcflib and bamtools
+-  ${ION_VCFLIB_DIR}/Variant.cpp
+-  ${ION_VCFLIB_DIR}/split.cpp
+-  ${ION_VCFLIB_DIR}/tabixpp/tabix.cpp
+-  ${ION_VCFLIB_DIR}/tabixpp/index.c
+-  ${ION_VCFLIB_DIR}/tabixpp/bgzf.c
+-  ${ION_VCFLIB_DIR}/smithwaterman/LeftAlign.cpp
+-  ${ION_VCFLIB_DIR}/smithwaterman/Repeats.cpp
+-  ${ION_VCFLIB_DIR}/smithwaterman/IndelAllele.cpp
+-  ${ION_VCFLIB_DIR}/smithwaterman/SmithWatermanGotoh.cpp
+-
+   Util/OptArgs.cpp
+-  ${ION_JSONCPP_DIR}/jsoncpp.cpp
++  Util/Utils.cpp
+   ${PROJECT_BINARY_DIR}/IonVersion.cpp
+ )
+ 
+-target_link_libraries(tvcassembly ${ION_BAMTOOLS_LIBS} z pthread)
++target_link_libraries(tvcassembly bamtools z pthread jsoncpp)
+ 
+ 
+ add_executable(tvcutils
+@@ -146,11 +128,10 @@ add_executable(tvcutils
+   ${ION_VCFLIB_DIR}/smithwaterman/Repeats.cpp
+   ${ION_VCFLIB_DIR}/smithwaterman/IndelAllele.cpp
+   ${ION_VCFLIB_DIR}/smithwaterman/SmithWatermanGotoh.cpp
+-  ${ION_JSONCPP_DIR}/jsoncpp.cpp
+   ${PROJECT_BINARY_DIR}/IonVersion.cpp
+ )
+ 
+-target_link_libraries(tvcutils ${ION_BAMTOOLS_LIBS} z)
++target_link_libraries(tvcutils bamtools z jsoncpp)
+ 
+ install(TARGETS   tvc                                                 DESTINATION bin)
+ install(TARGETS   tvcassembly                                         DESTINATION bin)
+@@ -165,28 +146,76 @@ add_test(NAME    tvc_call
+          COMMAND tvc
+ )
+ 
+-if(0)
++add_test( tvc_test_1_thread
++   tvc
++   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
++   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
++   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
++   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
++   --trim-ampliseq-primers on
++   --num-threads 1
++   --output-dir      ${PROJECT_BINARY_DIR}/test1
++   --output-vcf      small_variants.vcf
++)
++
++
++add_test( tvc_test_4_threads_with_parameter_file
++   tvc
++   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
++   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
++   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
++   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
++   --parameters-file ${PROJECT_SOURCE_DIR}/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json
++   --trim-ampliseq-primers on
++   --num-threads 4
++   --output-dir      ${PROJECT_BINARY_DIR}/test2
++   --output-vcf      small_variants.vcf
++)
+ 
+ add_test(tvcutils_call
+    tvcutils
+ )
++set_tests_properties(tvcutils_call PROPERTIES
++ PASS_REGULAR_EXPRESSION "Commands"
++)
+ 
+ add_test(tvcutils_prepare_hotspots_call
+    tvcutils prepare_hotspots
+ )
++set_tests_properties(tvcutils_prepare_hotspots_call PROPERTIES
++ PASS_REGULAR_EXPRESSION "General options"
++)
+ 
+ add_test(tvcutils_validate_bed_call
+    tvcutils validate_bed
+ )
++set_tests_properties(tvcutils_validate_bed_call PROPERTIES
++ PASS_REGULAR_EXPRESSION "General options"
++)
++
++add_test(tvcutils_unify_vcf_call
++   tvcutils unify_vcf
++)
++set_tests_properties(tvcutils_unify_vcf_call PROPERTIES
++ PASS_REGULAR_EXPRESSION "General options"
++)
+ 
+-add_test(tvcutils_simple
+-   vcftools
+-   --vcf ./all.merged.vcf
+-   --bed ./effective_regions.bed
+-   --out ./all
+-   --recode
+-  --keep-INFO-all
++
++add_test(tvcassembly_call
++   tvcassembly
+ )
++
++if(0)
++
++add_test(pipeline
++    ${PROJECT_SOURCE_DIR}/bin/variant_caller_pipeline.py
++    --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
++    --reference-fasta ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
++    --region-bed      ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_merged_plain.bed
++    --primer-trim-bed ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
++    --output-dir      ${PROJECT_BINARY_DIR}/Testing/variant_caller_pipeline_call
++)
++
+ add_test(tvc_simple
+    tvc
+    --output-dir  ${PROJECT_BINARY_DIR}/Testing/tvc_simple
+@@ -198,16 +227,9 @@ add_test(tvc_simple
+    --num-threads 12
+ )
+ 
+-add_test(
+-   variant_caller_pipeline.py
+-    --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
+-    --reference-fasta ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
+-    --region-bed      ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_merged_plain.bed
+-    --primer-trim-bed ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
+-    --output-dir      ${PROJECT_BINARY_DIR}/Testing/variant_caller_pipeline_call
+-)
+ endif()
+ 
++if (0)
+ 
+     set(test_rm_files)
+     set(test_file_prefix "AAAA")
+@@ -241,7 +263,6 @@ endif()
+       )
+ 
+ 
+-if (1)
+ 
+     set(test_name        variant_caller_pipeline_call)
+     set(test_prog        variant_caller_pipeline.py)
+@@ -270,7 +291,7 @@ if (1)
+ endif()
+ 
+ 
+-if (1)
++if (0)
+ 
+     set(test_name        Z06-506-CCP)
+     set(test_prog        variant_caller_pipeline.py)

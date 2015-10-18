@@ -1,0 +1,18 @@
+tvc for Debian
+--------------
+
+Usage example:
+
+tvc                                                                                                             \
+ --input-bam       /usr/share/TVC/examples/example1/test.bam                                                    \
+ --reference       /usr/share/TVC/examples/example1/reference.fasta                                             \
+ --target-file     /usr/share/TVC/examples/example1/test_unmerged_detail.bed                                    \
+ --error-motifs    /usr/share/TVC/sse/motifset.txt                                                              \
+ --parameters-file /usr/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json \
+ --output-dir      /tmp/TVC                                                                                     \
+ --output-vcf      small_variants.vcf
+
+
+For more information see http://ioncommunity.thermofisher.com/community/products/software/torrent-variant-caller
+
+ -- Dominique Belhachemi <domibel@debian.org>  Sun, 08 Mar 2015 15:30:08 -0400

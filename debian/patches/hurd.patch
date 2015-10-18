@@ -1,0 +1,27 @@
+Description: replace PATH_MAX with hardcoded value to avoid build error on hurd
+Author: Dominique Belhachemi <domibel@debian.org>
+
+Index: tvc-5.0.0+dfsg/Util/Utils.cpp
+===================================================================
+--- tvc-5.0.0+dfsg.orig/Util/Utils.cpp
++++ tvc-5.0.0+dfsg/Util/Utils.cpp
+@@ -229,7 +229,8 @@ void get_exe_name (char * buffer)
+   pid = getpid();
+   snprintf (&linkname[0], sizeof (linkname), "/proc/%i/exe", pid);
+ 
+-  if (readlink (&linkname[0], buffer, PATH_MAX) == -1)
++  int path_max = 4096;
++  if (readlink (&linkname[0], buffer, path_max) == -1)
+     offset = 0;
+   else
+   {
+@@ -313,7 +314,8 @@ char *GetIonConfigFile (const char filen
+ 
+   // Search for config file:
+   //  Last ditch effort: Installation location.  Get location of binary, then up one dir and down into config
+-  char INSTALL[PATH_MAX] = {0};
++  int path_max = 4096;
++  char INSTALL[path_max] = {0};
+   get_exe_name (INSTALL);
+   // executable is always in bin so we specifically strip that off.
+   char *sPtr = NULL;

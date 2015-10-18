@@ -1,0 +1,51 @@
+tvc (5.0.0+dfsg-1) experimental; urgency=medium
+
+  * new upstream release
+  * patches applied upstream can be removed 
+       disorder.patch
+       outputdir.patch
+       sse.patch
+       version.patch
+  * added dependency libboost-math-dev
+
+ -- Dominique Belhachemi <domibel@debian.org>  Thu, 03 Sep 2015 12:24:49 -0400
+
+tvc (4.6.0+dfsg-2) experimental; urgency=medium
+
+  * build without SSE on all architectures
+
+ -- Dominique Belhachemi <domibel@debian.org>  Thu, 13 Aug 2015 22:40:23 -0400
+
+tvc (4.6.0+dfsg-1) experimental; urgency=low
+
+  * new upstream release
+  * added outputdir.patch
+
+ -- Dominique Belhachemi <domibel@debian.org>  Sun, 19 Jul 2015 16:00:24 -0400
+
+tvc (4.4.3+dfsg-1) experimental; urgency=low
+
+  * new upstream release
+
+ -- Dominique Belhachemi <domibel@debian.org>  Fri, 03 Jul 2015 10:36:33 -0400
+
+tvc (4.2.4+dfsg-1) experimental; urgency=low
+
+  * new upstream release
+  * disabled version.patch
+  * updated cmake.patch to drop unused file
+
+ -- Dominique Belhachemi <domibel@debian.org>  Thu, 02 Jul 2015 07:38:11 -0400
+
+tvc (4.2.3+dfsg-2) experimental; urgency=low
+
+  * fixed FTBFS issue on archs without SSE
+  * fixed FTBS issue on hurd
+
+ -- Dominique Belhachemi <domibel@debian.org>  Tue, 30 Jun 2015 07:32:28 -0400
+
+tvc (4.2.3+dfsg-1) experimental; urgency=low
+
+  * Initial release (Closes: #780064)
+
+ -- Dominique Belhachemi <domibel@debian.org>  Sun, 08 Mar 2015 15:30:08 -0400

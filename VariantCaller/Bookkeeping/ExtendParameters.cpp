@@ -147,7 +147,7 @@ void VariantCallerHelp() {
   printf("Debugging:\n");
   printf("  -d,--debug                            INT         (0/1/2) display extra debug messages [0]\n");
   printf("     --do-json-diagnostic               on/off      (devel) dump internal state to json file (uses much more time/memory/disk) [off]\n");
-  printf("     --postprocessed-bam                FILE        (devel) save tvc-processed reads to an (unsorted) BAM file [optional]");
+  printf("     --postprocessed-bam                FILE        (devel) save tvc-processed reads to an (unsorted) BAM file [optional]\n");
   printf("     --do-minimal-diagnostic            on/off      (devel) provide minimal read information for called variants [off]\n");
   printf("     --override-limits                  on/off      (devel) disable limit-check on input parameters [off].\n");
   printf("\n");
