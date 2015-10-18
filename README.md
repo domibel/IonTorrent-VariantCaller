@@ -1,1 +1,0 @@
-# IonTorrent-VariantCaller
