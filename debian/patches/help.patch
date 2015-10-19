@@ -1,11 +1,23 @@
 Description: small style change to display usage information
 Author: Dominique Belhachemi <domibel@debian.org>
 
-Index: tvc-5.0.0+dfsg/VariantCaller/Bookkeeping/ExtendParameters.cpp
+Index: tvc-5.0.2+dfsg/VariantCaller/Bookkeeping/ExtendParameters.cpp
 ===================================================================
---- tvc-5.0.0+dfsg.orig/VariantCaller/Bookkeeping/ExtendParameters.cpp
-+++ tvc-5.0.0+dfsg/VariantCaller/Bookkeeping/ExtendParameters.cpp
-@@ -147,7 +147,7 @@ void VariantCallerHelp() {
+--- tvc-5.0.2+dfsg.orig/VariantCaller/Bookkeeping/ExtendParameters.cpp
++++ tvc-5.0.2+dfsg/VariantCaller/Bookkeeping/ExtendParameters.cpp
+@@ -77,7 +77,11 @@ void VariantCallerHelp() {
+   printf("\n");
+ 
+   printf("Advanced variant candidate scoring options:\n");
++#ifdef __SSE3__
+   printf("     --use-sse-basecaller               on/off      Switch to use the vectorized version of the basecaller [on].\n");
++#else
++  printf("     --use-sse-basecaller               on/off      Switch to use the vectorized version of the basecaller [off].\n");
++#endif
+   printf("     --resolve-clipped-bases            on/off      If 'true', the basecaller is used to solve soft clipped bases [off].\n");
+   printf("     --prediction-precision             FLOAT       prior weight in bias estimator [30.0]\n");
+   printf("     --shift-likelihood-penalty         FLOAT       penalize log-likelihood for solutions involving large systematic bias [0.3]\n");
+@@ -147,7 +151,7 @@ void VariantCallerHelp() {
    printf("Debugging:\n");
    printf("  -d,--debug                            INT         (0/1/2) display extra debug messages [0]\n");
    printf("     --do-json-diagnostic               on/off      (devel) dump internal state to json file (uses much more time/memory/disk) [off]\n");

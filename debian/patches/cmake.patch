@@ -1,10 +1,10 @@
 Description: link against system libraries
 Author: Dominique Belhachemi <domibel@debian.org>
 
-Index: tvc-5.0.0+dfsg/CMakeLists.txt
+Index: tvc-5.0.2+dfsg/CMakeLists.txt
 ===================================================================
---- tvc-5.0.0+dfsg.orig/CMakeLists.txt
-+++ tvc-5.0.0+dfsg/CMakeLists.txt
+--- tvc-5.0.2+dfsg.orig/CMakeLists.txt
++++ tvc-5.0.2+dfsg/CMakeLists.txt
 @@ -2,8 +2,8 @@
  cmake_minimum_required (VERSION 2.6)
  project (ion-tvc)
@@ -35,12 +35,20 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
  
  include_directories("${PROJECT_SOURCE_DIR}/VariantCaller")
  include_directories("${PROJECT_SOURCE_DIR}/VariantCaller/FlowDistEval")
-@@ -91,43 +87,29 @@ add_executable(tvc
+@@ -39,7 +35,7 @@ include_directories("${PROJECT_SOURCE_DI
+ include_directories("${PROJECT_SOURCE_DIR}/Util")
+ include_directories("${PROJECT_SOURCE_DIR}")
+ 
+-add_executable(tvc
++set(tvcSRCS
+   VariantCaller/VariantCaller.cpp
+   VariantCaller/BAMWalkerEngine.cpp
+   VariantCaller/OrderedBAMWriter.cpp
+@@ -91,43 +87,34 @@ add_executable(tvc
  
    BaseCaller/PIDloop.cpp
    BaseCaller/DPTreephaser.cpp
 -  BaseCaller/TreephaserSSE.cpp
-+#  BaseCaller/TreephaserSSE.cpp
    Calibration/LinearCalibrationModel.cpp
    Calibration/FlowAlignment.cpp
    Util/OptArgs.cpp
@@ -52,6 +60,12 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
  )
  
 -target_link_libraries(tvc ${ION_BAMTOOLS_LIBS} z pthread blas lapack)
++if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
++    list(APPEND tvcSRCS
++        BaseCaller/TreephaserSSE.cpp)
++endif()
++
++add_executable(tvc ${tvcSRCS})
 +target_link_libraries(tvc bamtools z pthread blas lapack armadillo jsoncpp)
  
  
@@ -83,7 +97,7 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
  
  
  add_executable(tvcutils
-@@ -146,11 +128,10 @@ add_executable(tvcutils
+@@ -146,11 +133,10 @@ add_executable(tvcutils
    ${ION_VCFLIB_DIR}/smithwaterman/Repeats.cpp
    ${ION_VCFLIB_DIR}/smithwaterman/IndelAllele.cpp
    ${ION_VCFLIB_DIR}/smithwaterman/SmithWatermanGotoh.cpp
@@ -96,17 +110,34 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
  
  install(TARGETS   tvc                                                 DESTINATION bin)
  install(TARGETS   tvcassembly                                         DESTINATION bin)
-@@ -165,28 +146,76 @@ add_test(NAME    tvc_call
+@@ -165,28 +151,111 @@ add_test(NAME    tvc_call
           COMMAND tvc
  )
  
 -if(0)
-+add_test( tvc_test_1_thread
++if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
++add_test( tvc_test_1_thread_sse_on
 +   tvc
 +   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
 +   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
 +   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
 +   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
++   --use-sse-basecaller on
++   --trim-ampliseq-primers on
++   --num-threads 1
++   --output-dir      ${PROJECT_BINARY_DIR}/test1
++   --output-vcf      small_variants.vcf
++)
++endif()
++
++
++add_test( tvc_test_1_thread_sse_off
++   tvc
++   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
++   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
++   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
++   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
++   --use-sse-basecaller off
 +   --trim-ampliseq-primers on
 +   --num-threads 1
 +   --output-dir      ${PROJECT_BINARY_DIR}/test1
@@ -114,13 +145,31 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
 +)
 +
 +
-+add_test( tvc_test_4_threads_with_parameter_file
++if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
++add_test( tvc_test_4_threads_sse_on_with_parameter_file
 +   tvc
 +   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
 +   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
 +   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
 +   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
 +   --parameters-file ${PROJECT_SOURCE_DIR}/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json
++   --use-sse-basecaller on
++   --trim-ampliseq-primers on
++   --num-threads 4
++   --output-dir      ${PROJECT_BINARY_DIR}/test2
++   --output-vcf      small_variants.vcf
++)
++endif()
++
++
++add_test( tvc_test_4_threads_sse_off_with_parameter_file
++   tvc
++   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
++   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
++   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
++   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
++   --parameters-file ${PROJECT_SOURCE_DIR}/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json
++   --use-sse-basecaller off
 +   --trim-ampliseq-primers on
 +   --num-threads 4
 +   --output-dir      ${PROJECT_BINARY_DIR}/test2
@@ -154,6 +203,13 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
 +set_tests_properties(tvcutils_unify_vcf_call PROPERTIES
 + PASS_REGULAR_EXPRESSION "General options"
 +)
++
++
++add_test(tvcassembly_call
++   tvcassembly
++)
++
++if(0)
  
 -add_test(tvcutils_simple
 -   vcftools
@@ -162,13 +218,6 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
 -   --out ./all
 -   --recode
 -  --keep-INFO-all
-+
-+add_test(tvcassembly_call
-+   tvcassembly
- )
-+
-+if(0)
-+
 +add_test(pipeline
 +    ${PROJECT_SOURCE_DIR}/bin/variant_caller_pipeline.py
 +    --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
@@ -176,12 +225,12 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
 +    --region-bed      ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_merged_plain.bed
 +    --primer-trim-bed ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
 +    --output-dir      ${PROJECT_BINARY_DIR}/Testing/variant_caller_pipeline_call
-+)
+ )
 +
  add_test(tvc_simple
     tvc
     --output-dir  ${PROJECT_BINARY_DIR}/Testing/tvc_simple
-@@ -198,16 +227,9 @@ add_test(tvc_simple
+@@ -198,16 +267,9 @@ add_test(tvc_simple
     --num-threads 12
  )
  
@@ -199,7 +248,7 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
  
      set(test_rm_files)
      set(test_file_prefix "AAAA")
-@@ -241,7 +263,6 @@ endif()
+@@ -241,7 +303,6 @@ endif()
        )
  
  
@@ -207,7 +256,7 @@ Index: tvc-5.0.0+dfsg/CMakeLists.txt
  
      set(test_name        variant_caller_pipeline_call)
      set(test_prog        variant_caller_pipeline.py)
-@@ -270,7 +291,7 @@ if (1)
+@@ -270,7 +331,7 @@ if (1)
  endif()
  
  

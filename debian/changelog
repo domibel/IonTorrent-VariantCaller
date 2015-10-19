@@ -1,6 +1,7 @@
-tvc (5.0.2+dfsg-1) UNRELEASED; urgency=medium
+tvc (5.0.2+dfsg-1) experimental; urgency=medium
 
-  * 
+  * new upstream patch release
+  * turn off SSE on non-x86_64 architectures
 
  -- Dominique Belhachemi <domibel@debian.org>  Sat, 17 Oct 2015 22:39:40 -0400
 

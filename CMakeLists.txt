@@ -35,7 +35,7 @@ include_directories("${PROJECT_SOURCE_DIR}/Calibration")
 include_directories("${PROJECT_SOURCE_DIR}/Util")
 include_directories("${PROJECT_SOURCE_DIR}")
 
-add_executable(tvc
+set(tvcSRCS
   VariantCaller/VariantCaller.cpp
   VariantCaller/BAMWalkerEngine.cpp
   VariantCaller/OrderedBAMWriter.cpp
@@ -87,7 +87,6 @@ add_executable(tvc
 
   BaseCaller/PIDloop.cpp
   BaseCaller/DPTreephaser.cpp
-#  BaseCaller/TreephaserSSE.cpp
   Calibration/LinearCalibrationModel.cpp
   Calibration/FlowAlignment.cpp
   Util/OptArgs.cpp
@@ -97,6 +96,12 @@ add_executable(tvc
   ${PROJECT_BINARY_DIR}/IonVersion.cpp
 )
 
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+    list(APPEND tvcSRCS
+        BaseCaller/TreephaserSSE.cpp)
+endif()
+
+add_executable(tvc ${tvcSRCS})
 target_link_libraries(tvc bamtools z pthread blas lapack armadillo jsoncpp)
 
 
@@ -146,12 +151,29 @@ add_test(NAME    tvc_call
          COMMAND tvc
 )
 
-add_test( tvc_test_1_thread
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+add_test( tvc_test_1_thread_sse_on
    tvc
    --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
    --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
    --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
    --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
+   --use-sse-basecaller on
+   --trim-ampliseq-primers on
+   --num-threads 1
+   --output-dir      ${PROJECT_BINARY_DIR}/test1
+   --output-vcf      small_variants.vcf
+)
+endif()
+
+
+add_test( tvc_test_1_thread_sse_off
+   tvc
+   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
+   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
+   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
+   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
+   --use-sse-basecaller off
    --trim-ampliseq-primers on
    --num-threads 1
    --output-dir      ${PROJECT_BINARY_DIR}/test1
@@ -159,13 +181,31 @@ add_test( tvc_test_1_thread
 )
 
 
-add_test( tvc_test_4_threads_with_parameter_file
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+add_test( tvc_test_4_threads_sse_on_with_parameter_file
    tvc
    --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
    --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
    --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
    --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
    --parameters-file ${PROJECT_SOURCE_DIR}/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json
+   --use-sse-basecaller on
+   --trim-ampliseq-primers on
+   --num-threads 4
+   --output-dir      ${PROJECT_BINARY_DIR}/test2
+   --output-vcf      small_variants.vcf
+)
+endif()
+
+
+add_test( tvc_test_4_threads_sse_off_with_parameter_file
+   tvc
+   --input-bam       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test.bam
+   --reference       ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/reference.fasta
+   --target-file     ${PROJECT_SOURCE_DIR}/share/TVC/examples/example1/test_unmerged_detail.bed
+   --error-motifs    ${PROJECT_SOURCE_DIR}/share/TVC/sse/motifset.txt
+   --parameters-file ${PROJECT_SOURCE_DIR}/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json
+   --use-sse-basecaller off
    --trim-ampliseq-primers on
    --num-threads 4
    --output-dir      ${PROJECT_BINARY_DIR}/test2

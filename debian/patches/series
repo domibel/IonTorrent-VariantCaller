@@ -2,3 +2,4 @@ cmake.patch
 bamtools.patch
 help.patch
 hurd.patch
+sse.patch

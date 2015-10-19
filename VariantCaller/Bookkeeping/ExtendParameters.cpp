@@ -77,7 +77,11 @@ void VariantCallerHelp() {
   printf("\n");
 
   printf("Advanced variant candidate scoring options:\n");
+#ifdef __SSE3__
   printf("     --use-sse-basecaller               on/off      Switch to use the vectorized version of the basecaller [on].\n");
+#else
+  printf("     --use-sse-basecaller               on/off      Switch to use the vectorized version of the basecaller [off].\n");
+#endif
   printf("     --resolve-clipped-bases            on/off      If 'true', the basecaller is used to solve soft clipped bases [off].\n");
   printf("     --prediction-precision             FLOAT       prior weight in bias estimator [30.0]\n");
   printf("     --shift-likelihood-penalty         FLOAT       penalize log-likelihood for solutions involving large systematic bias [0.3]\n");
