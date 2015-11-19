@@ -1,6 +1,6 @@
 # IonTorrent-VariantCaller
 
-## Quick Start
+### Quick Start
 ```
 git clone https://github.com/domibel/IonTorrent-VariantCaller.git
 
@@ -59,12 +59,21 @@ $TVC_ROOT_DIR/bin/variant_caller_pipeline.py \
     --reference-fasta $TVC_ROOT_DIR/share/TVC/examples/example1/reference.fasta \
     --region-bed      $TVC_ROOT_DIR/share/TVC/examples/example1/test_merged_plain.bed \
     --primer-trim-bed $TVC_ROOT_DIR/share/TVC/examples/example1/test_unmerged_detail.bed
+    
+*** export PATH, following tools are required: samtools zip tvc ***
+export PATH=$PATH:$TVC_ROOT_DIR/bin
 ```
 
 
-#### Get reference genome hg19 from Ion Torrent, Length: 868170684 (828M)
+### Get reference genome hg19 from Ion Torrent, Size: 868170684 (828M)
+
+##### Download zip archive
 ```
 $ wget http://ionupdates.com/reference/hg19.zip
+```
+
+##### Unpack zip archive
+```
 $ unzip hg19.zip
 ```
 
@@ -85,7 +94,27 @@ $ ls -l
 -rw-rw-r-- 1 ionadmin ionadmin        788 Nov 18 16:18 hg19.fasta.fai
 -rw-rw-r-- 1 ionadmin ionadmin  868170684 Jul  8  2014 hg19.zip
 ```
-#### Alternative: Get reference genome hg19 with TMAP index files from Ion Torrent, Length: 4613331358 (4.3G)
+
+### Examples
+
+#### 316 - H. sapiens - AmpliSeq BRCA1/BRCA2 Community Panel
+##### https://ioncommunity.thermofisher.com/docs/DOC-7515
+##### CN:TorrentServer/BRCA   PL:IONTORRENT   PU:PGM/316D/IonXpress_009
+```
+wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94IonXpress_009_rawlib.bam          # 163535738 156M
+wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94IonXpress_009_rawlib.bam.bai      #   1675968 1.6M
+wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94TSVC_variants_IonXpress_009.vcf   #     85850 84K
+
+variant_caller_pipeline.py \
+ --input-bam BRCArun94IonXpress_009_rawlib.bam \
+ --reference-fasta hg19.fasta \
+ --parameters-file=/usr/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json \
+ --generate-gvcf=on \
+ --num-threads=4
+```
+
+
+#### Alternative: Get reference genome hg19 with TMAP index files from Ion Torrent, Size: 4613331358 (4.3G)
 
 ```
 $ wget http://ionupdates.com/reference_downloads/hg19.zip
@@ -125,24 +154,6 @@ total 13218824
 -rw-rw-r-- 1 ionadmin ionadmin 4613331358 Jul  8  2014 hg19.zip
 -rwxr-xr-x 1 ionadmin ionadmin          0 May  6  2013 samtools.log
 -rwxr-xr-x 1 ionadmin ionadmin      15170 May  6  2013 tmap.log
-```
-
-## Examples
-
-### 316 - H. sapiens - AmpliSeq BRCA1/BRCA2 Community Panel
-#### https://ioncommunity.thermofisher.com/docs/DOC-7515
-#### CN:TorrentServer/BRCA   PL:IONTORRENT   PU:PGM/316D/IonXpress_009
-```
-wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94IonXpress_009_rawlib.bam          # 163535738 156M
-wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94IonXpress_009_rawlib.bam.bai      #   1675968 1.6M
-wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94TSVC_variants_IonXpress_009.vcf   #     85850 84K
-
-variant_caller_pipeline.py \
- --input-bam BRCArun94IonXpress_009_rawlib.bam \
- --reference-fasta hg19.fasta \
- --parameters-file=/usr/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json \
- --generate-gvcf=on \
- --num-threads=4
 ```
 
 
