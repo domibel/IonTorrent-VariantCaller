@@ -66,4 +66,21 @@ total 13218824
 -rwxr-xr-x 1 ionadmin ionadmin      15170 May  6  2013 tmap.log
 ```
 
+## Examples
+
+### 316 - H. sapiens - AmpliSeq BRCA1/BRCA2 Community Panel
+#### https://ioncommunity.thermofisher.com/docs/DOC-7515
+#### CN:TorrentServer/BRCA   PL:IONTORRENT   PU:PGM/316D/IonXpress_009
+wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94IonXpress_009_rawlib.bam          # 163535738 156M
+wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94IonXpress_009_rawlib.bam.bai      #   1675968 1.6M
+wget http://ion-torrent.s3.amazonaws.com/pgm/BRCArun94/BRCArun94TSVC_variants_IonXpress_009.vcf   #     85850 84K
+
+variant_caller_pipeline.py \
+ --input-bam BRCArun94IonXpress_009_rawlib.bam \
+ --reference-fasta hg19.fasta \
+ --parameters-file=/usr/share/TVC/pluginMedia/parameter_sets/ampliseq_somatic_lowstringency_pgm_parameters.json \
+ --generate-gvcf=on \
+ --num-threads=4
+
+
 See also https://ioncommunity.thermofisher.com/community/products/software/torrent-variant-caller
