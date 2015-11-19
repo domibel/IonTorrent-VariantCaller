@@ -64,7 +64,7 @@ make install
 
 # 4. build armadillo
 cd $BUILD_ROOT_DIR
-wget http://sourceforge.net/projects/arma/files/armadillo-4.600.1.tar.gz
+wget http://ionupdates.com/updates/software/external/armadillo-4.600.1.tar.gz
 tar xvzf armadillo-4.600.1.tar.gz
 cd armadillo-4.600.1/
 sed -i 's:^// #define ARMA_USE_LAPACK$:#define ARMA_USE_LAPACK:g' include/armadillo_bits/config.hpp
