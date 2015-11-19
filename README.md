@@ -1,5 +1,65 @@
 # IonTorrent-VariantCaller
 
+## Quick Start
+```
+git clone https://github.com/domibel/IonTorrent-VariantCaller.git
+
+BASE=`pwd`
+TVC_SOURCE_DIR=$BASE/IonTorrent-VariantCaller
+
+*** adjust build and install directory ***
+TVC_BUILD_DIR=$BASE/IonTorrent-VariantCaller-build
+TVC_INSTALL_DIR=$BASE/IonTorrent-VariantCaller-install/usr/local
+
+mkdir -p $TVC_BUILD_DIR
+mkdir -p $TVC_INSTALL_DIR
+
+cd $TVC_BUILD_DIR
+wget --no-clobber http://ionupdates.com/updates/software/external/armadillo-4.600.1.tar.gz
+tar xvzf armadillo-4.600.1.tar.gz
+cd armadillo-4.600.1/
+sed -i 's:^// #define ARMA_USE_LAPACK$:#define ARMA_USE_LAPACK:g' include/armadillo_bits/config.hpp
+sed -i 's:^// #define ARMA_USE_BLAS$:#define ARMA_USE_BLAS:g'     include/armadillo_bits/config.hpp
+cmake .
+make -j4
+
+cd $TVC_BUILD_DIR
+wget --no-clobber updates.iontorrent.com/updates/software/external/bamtools-2.4.0.20150702+git15eadb925f.tar.gz
+tar xvzf bamtools-2.4.0.20150702+git15eadb925f.tar.gz
+mkdir bamtools-2.4.0.20150702+git15eadb925f-build
+cd bamtools-2.4.0.20150702+git15eadb925f-build
+cmake ../bamtools-2.4.0.20150702+git15eadb925f -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo
+make -j4
+
+cd $TVC_BUILD_DIR
+wget --no-clobber --no-check-certificate https://github.com/samtools/htslib/archive/1.2.1.tar.gz -O htslib-1.2.1.tar.gz
+tar xvzf htslib-1.2.1.tar.gz
+ln -s htslib-1.2.1 htslib # for samtools
+cd htslib-1.2.1
+make -j4
+
+cd $TVC_BUILD_DIR
+wget --no-clobber --no-check-certificate https://github.com/samtools/samtools/archive/1.2.tar.gz -O samtools-1.2.tar.gz
+tar xvzf samtools-1.2.tar.gz
+cd samtools-1.2
+make -j4
+mkdir $TVC_INSTALL_DIR/bin
+cp samtools $TVC_INSTALL_DIR/bin/
+
+cd $TVC_BUILD_DIR
+mkdir TVC-build
+cd TVC-build
+cmake $TVC_SOURCE_DIR -DCMAKE_INSTALL_PREFIX:PATH=$TVC_INSTALL_DIR -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo
+make -j4 install
+
+*** quick test ***
+$TVC_INSTALL_DIR/bin/variant_caller_pipeline.py \
+    --input-bam       $TVC_ROOT_DIR/share/TVC/examples/example1/test.bam \
+    --reference-fasta $TVC_ROOT_DIR/share/TVC/examples/example1/reference.fasta \
+    --region-bed      $TVC_ROOT_DIR/share/TVC/examples/example1/test_merged_plain.bed \
+    --primer-trim-bed $TVC_ROOT_DIR/share/TVC/examples/example1/test_unmerged_detail.bed
+```
+
 
 #### Get reference genome hg19 from Ion Torrent, Length: 868170684 (828M)
 ```
