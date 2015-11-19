@@ -53,7 +53,8 @@ cmake $TVC_SOURCE_DIR -DCMAKE_INSTALL_PREFIX:PATH=$TVC_INSTALL_DIR -DCMAKE_BUILD
 make -j4 install
 
 *** quick test ***
-$TVC_INSTALL_DIR/bin/variant_caller_pipeline.py \
+TVC_ROOT_DIR=$TVC_INSTALL_DIR
+$TVC_ROOT_DIR/bin/variant_caller_pipeline.py \
     --input-bam       $TVC_ROOT_DIR/share/TVC/examples/example1/test.bam \
     --reference-fasta $TVC_ROOT_DIR/share/TVC/examples/example1/reference.fasta \
     --region-bed      $TVC_ROOT_DIR/share/TVC/examples/example1/test_merged_plain.bed \
