@@ -1,4 +1,9 @@
-# IonTorrent-VariantCaller
+# Ion Torrent Variant Caller
+
+Ion Torrent Variant Caller (TVC) is a genetic variant caller for Ion Torrent sequencing platforms,
+and is specially optimized to exploit the underlying flow signal information in the statistical model
+to evaluate variants. Torrent Variant Caller is designed to call single-nucleotide polymorphisms (SNPs),
+multi-nucleotide polymorphisms (MNPs), insertions, deletions, and block substitutions.
 
 ### Quick Start
 ```
