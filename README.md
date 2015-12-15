@@ -20,7 +20,7 @@ mkdir -p $TVC_BUILD_DIR
 mkdir -p $TVC_INSTALL_DIR
 
 cd $TVC_BUILD_DIR
-wget --no-clobber http://ionupdates.com/updates/software/external/armadillo-4.600.1.tar.gz
+wget --no-clobber updates.iontorrent.com/updates/software/external/armadillo-4.600.1.tar.gz
 tar xvzf armadillo-4.600.1.tar.gz
 cd armadillo-4.600.1/
 sed -i 's:^// #define ARMA_USE_LAPACK$:#define ARMA_USE_LAPACK:g' include/armadillo_bits/config.hpp
