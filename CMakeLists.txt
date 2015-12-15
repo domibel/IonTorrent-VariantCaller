@@ -3,7 +3,12 @@ cmake_minimum_required (VERSION 2.6)
 project (ion-tvc)
 
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse3")
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse3")
+endif()
+
+message(STATUS "CMAKE_CXX_FLAGS: '${CMAKE_CXX_FLAGS}'")
+
 add_definitions(-DALIGNSTATS_IGNORE)
 
 configure_file (
@@ -39,7 +44,7 @@ include_directories("${PROJECT_SOURCE_DIR}/Calibration")
 include_directories("${PROJECT_SOURCE_DIR}/Util")
 include_directories("${PROJECT_SOURCE_DIR}")
 
-add_executable(tvc
+set(tvcSRCS
   VariantCaller/VariantCaller.cpp
   VariantCaller/BAMWalkerEngine.cpp
   VariantCaller/OrderedBAMWriter.cpp
@@ -91,7 +96,6 @@ add_executable(tvc
 
   BaseCaller/PIDloop.cpp
   BaseCaller/DPTreephaser.cpp
-  BaseCaller/TreephaserSSE.cpp
   Calibration/LinearCalibrationModel.cpp
   Calibration/FlowAlignment.cpp
   Util/OptArgs.cpp
@@ -102,6 +106,12 @@ add_executable(tvc
   ${PROJECT_BINARY_DIR}/IonVersion.cpp
 )
 
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+    list(APPEND tvcSRCS
+        BaseCaller/TreephaserSSE.cpp)
+endif()
+
+add_executable(tvc ${tvcSRCS})
 target_link_libraries(tvc ${ION_BAMTOOLS_LIBS} z pthread blas lapack)
 
 

@@ -5,8 +5,8 @@ using namespace std;
 
 string IonVersion::GetMajor()     {return "5";}
 string IonVersion::GetMinor()     {return "0";}
-string IonVersion::GetRelease()   {return "2";}
-string IonVersion::GetGitHash()   {return "517ac65-17caf86";}
+string IonVersion::GetRelease()   {return "3";}
+string IonVersion::GetGitHash()   {return "e975447-9fa85fb";}
 string IonVersion::GetGitPath()   {return "";}
 string IonVersion::GetBuildNum()  {return "";}
 string IonVersion::GetBuildTag()  {return "";}
@@ -20,7 +20,7 @@ string IonVersion::GetFullVersion(std::string module)
 	v += ".";
 	v += "0";
 	v += ".";
-	v += "2";
+	v += "3";
 	v += ")\n";
 	v += "Build: ";
 	v += "";
@@ -29,7 +29,7 @@ string IonVersion::GetFullVersion(std::string module)
 	v += ")\nSource: ";
 	v += "";
 	v += " (";
-	v += "517ac65-17caf86";
+	v += "e975447-9fa85fb";
 	v += ")\n";
 	return v;
 }

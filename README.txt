@@ -8,12 +8,12 @@ http://ioncommunity.lifetechnologies.com/community/products/torrent-variant-call
 
 # 1. Download source file
 
-wget updates.iontorrent.com/tvc_standalone/tvc-5.0.2.tar.gz
+wget updates.iontorrent.com/tvc_standalone/tvc-5.0.3.tar.gz
 
 
 # 2. Copy source file into build root directory
 
-TVC_VERSION=tvc-5.0.2
+TVC_VERSION=tvc-5.0.3
 
 BUILD_ROOT_DIR=`mktemp -d`
 cp $TVC_VERSION.tar.gz $BUILD_ROOT_DIR
@@ -64,7 +64,7 @@ make install
 
 # 4. build armadillo
 cd $BUILD_ROOT_DIR
-wget http://ionupdates.com/updates/software/external/armadillo-4.600.1.tar.gz
+wget http://updates.iontorrent.com/updates/software/external/armadillo-4.600.1.tar.gz
 tar xvzf armadillo-4.600.1.tar.gz
 cd armadillo-4.600.1/
 sed -i 's:^// #define ARMA_USE_LAPACK$:#define ARMA_USE_LAPACK:g' include/armadillo_bits/config.hpp
