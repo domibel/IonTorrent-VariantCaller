@@ -1,3 +1,9 @@
+tvc (5.0.3+dfsg-1) experimental; urgency=medium
+
+  * new upstream patch release
+
+ -- Dominique Belhachemi <domibel@debian.org>  Mon, 14 Dec 2015 22:57:35 -0500
+
 tvc (5.0.2+dfsg-1) experimental; urgency=medium
 
   * new upstream patch release
