@@ -4,6 +4,12 @@ project (ion-tvc)
 
 enable_testing()
 
+if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse3")
+endif()
+
+message(STATUS "CMAKE_CXX_FLAGS: '${CMAKE_CXX_FLAGS}'")
+
 add_definitions(-DALIGNSTATS_IGNORE)
 
 configure_file (
