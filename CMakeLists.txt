@@ -4,7 +4,7 @@ project (ion-tvc)
 
 
 if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse3")
 endif()
 
 message(STATUS "CMAKE_CXX_FLAGS: '${CMAKE_CXX_FLAGS}'")
